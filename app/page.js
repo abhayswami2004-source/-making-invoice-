@@ -2,26 +2,41 @@
 import { useState } from "react";
 
 export default function Home() {
-  const [item, setItem] = useState("");
-  const [quantity, setQuantity] = useState(1);
-  const [price, setPrice] = useState(0);
+  const [company, setCompany] = useState("");
+  const [client, setClient] = useState("");
+  const [gstin, setGstin] = useState("");
 
-  const total = quantity * price;
+  const [items, setItems] = useState([
+    { name: "", qty: 1, price: 0 }
+  ]);
 
   const invoiceNumber = Math.floor(Math.random() * 100000);
   const invoiceDate = new Date().toLocaleDateString();
 
+  const updateItem = (index, field, value) => {
+    const newItems = [...items];
+    newItems[index][field] = value;
+    setItems(newItems);
+  };
+
+  const addItem = () => {
+    setItems([...items, { name: "", qty: 1, price: 0 }]);
+  };
+
+  const subtotal = items.reduce(
+    (sum, item) => sum + item.qty * item.price,
+    0
+  );
+
+  const cgst = subtotal * 0.09;
+  const sgst = subtotal * 0.09;
+  const grandTotal = subtotal + cgst + sgst;
+
   return (
     <>
-      {/* Print styles */}
       <style>{`
         @media print {
-          .no-print {
-            display: none;
-          }
-          body {
-            background: white;
-          }
+          .no-print { display: none; }
         }
         table {
           width: 100%;
@@ -31,24 +46,21 @@ export default function Home() {
         th, td {
           border: 1px solid #ccc;
           padding: 8px;
-          text-align: left;
         }
         th {
           background: #f2f2f2;
         }
       `}</style>
 
-      <main
-        style={{
-          padding: "20px",
-          fontFamily: "Arial",
-          maxWidth: "600px",
-          margin: "auto",
-          border: "1px solid #ccc",
-          borderRadius: "8px"
-        }}
-      >
-        <h1 style={{ textAlign: "center" }}>INVOICE</h1>
+      <main style={{
+        padding: "20px",
+        fontFamily: "Arial",
+        maxWidth: "800px",
+        margin: "auto",
+        border: "1px solid #ccc",
+        borderRadius: "8px"
+      }}>
+        <h1 style={{ textAlign: "center" }}>TAX INVOICE</h1>
 
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           <div>
@@ -56,65 +68,84 @@ export default function Home() {
             <p><strong>Date:</strong> {invoiceDate}</p>
           </div>
           <div>
-            <p><strong>From:</strong></p>
-            <p>Your Company Name</p>
+            <p><strong>GSTIN:</strong> {gstin}</p>
           </div>
         </div>
 
         <hr />
 
-        {/* INPUT SECTION */}
+        {/* INPUTS */}
         <div className="no-print">
-          <label>Item Name</label>
-          <input
-            type="text"
-            value={item}
-            onChange={(e) => setItem(e.target.value)}
-            style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
-          />
+          <label>Company Name</label>
+          <input value={company} onChange={(e) => setCompany(e.target.value)} />
 
-          <label>Quantity</label>
-          <input
-            type="number"
-            value={quantity}
-            onChange={(e) => setQuantity(Number(e.target.value))}
-            style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
-          />
+          <label>Client Name</label>
+          <input value={client} onChange={(e) => setClient(e.target.value)} />
 
-          <label>Price</label>
-          <input
-            type="number"
-            value={price}
-            onChange={(e) => setPrice(Number(e.target.value))}
-            style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
-          />
+          <label>GSTIN</label>
+          <input value={gstin} onChange={(e) => setGstin(e.target.value)} />
+
+          <button onClick={addItem} style={{ marginTop: "10px" }}>
+            + Add Item
+          </button>
         </div>
 
-        {/* INVOICE TABLE */}
+        <hr />
+
+        <p><strong>From:</strong> {company}</p>
+        <p><strong>Bill To:</strong> {client}</p>
+
         <table>
           <thead>
             <tr>
               <th>Item</th>
               <th>Qty</th>
-              <th>Price</th>
-              <th>Total</th>
+              <th>Rate</th>
+              <th>Amount</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>{item}</td>
-              <td>{quantity}</td>
-              <td>₹{price}</td>
-              <td>₹{total}</td>
-            </tr>
+            {items.map((item, i) => (
+              <tr key={i}>
+                <td>
+                  <input
+                    className="no-print"
+                    value={item.name}
+                    onChange={(e) => updateItem(i, "name", e.target.value)}
+                  />
+                  {item.name}
+                </td>
+                <td>
+                  <input
+                    className="no-print"
+                    type="number"
+                    value={item.qty}
+                    onChange={(e) => updateItem(i, "qty", Number(e.target.value))}
+                  />
+                  {item.qty}
+                </td>
+                <td>
+                  <input
+                    className="no-print"
+                    type="number"
+                    value={item.price}
+                    onChange={(e) => updateItem(i, "price", Number(e.target.value))}
+                  />
+                  ₹{item.price}
+                </td>
+                <td>₹{item.qty * item.price}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
 
-        <h3 style={{ textAlign: "right", marginTop: "10px" }}>
-          Grand Total: ₹{total}
-        </h3>
+        <div style={{ textAlign: "right", marginTop: "15px" }}>
+          <p>Subtotal: ₹{subtotal}</p>
+          <p>CGST (9%): ₹{cgst.toFixed(2)}</p>
+          <p>SGST (9%): ₹{sgst.toFixed(2)}</p>
+          <h3>Grand Total: ₹{grandTotal.toFixed(2)}</h3>
+        </div>
 
-        {/* PRINT BUTTON */}
         <button
           className="no-print"
           onClick={() => window.print()}
@@ -122,14 +153,12 @@ export default function Home() {
             marginTop: "20px",
             padding: "10px",
             width: "100%",
-            cursor: "pointer",
-            backgroundColor: "#000",
-            color: "#fff",
-            border: "none",
-            borderRadius: "4px"
+            background: "black",
+            color: "white",
+            border: "none"
           }}
         >
-          Print / Save as PDF
+          Print / Save PDF
         </button>
       </main>
     </>
