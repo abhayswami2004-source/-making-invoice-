@@ -13,12 +13,28 @@ export default function Home() {
 
   return (
     <>
-      {/* Print CSS */}
+      {/* Print styles */}
       <style>{`
         @media print {
           .no-print {
             display: none;
           }
+          body {
+            background: white;
+          }
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 15px;
+        }
+        th, td {
+          border: 1px solid #ccc;
+          padding: 8px;
+          text-align: left;
+        }
+        th {
+          background: #f2f2f2;
         }
       `}</style>
 
@@ -26,27 +42,35 @@ export default function Home() {
         style={{
           padding: "20px",
           fontFamily: "Arial",
-          maxWidth: "400px",
+          maxWidth: "600px",
           margin: "auto",
           border: "1px solid #ccc",
           borderRadius: "8px"
         }}
       >
-        <h1>Simple Invoice</h1>
+        <h1 style={{ textAlign: "center" }}>INVOICE</h1>
 
-        <p><strong>Invoice No:</strong> {invoiceNumber}</p>
-        <p><strong>Date:</strong> {invoiceDate}</p>
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <div>
+            <p><strong>Invoice No:</strong> {invoiceNumber}</p>
+            <p><strong>Date:</strong> {invoiceDate}</p>
+          </div>
+          <div>
+            <p><strong>From:</strong></p>
+            <p>Your Company Name</p>
+          </div>
+        </div>
 
         <hr />
 
-        {/* INPUT SECTION (hidden in print) */}
+        {/* INPUT SECTION */}
         <div className="no-print">
           <label>Item Name</label>
           <input
             type="text"
             value={item}
             onChange={(e) => setItem(e.target.value)}
-            style={{ width: "100%", marginBottom: "10px", padding: "8px" }}
+            style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
           />
 
           <label>Quantity</label>
@@ -54,7 +78,7 @@ export default function Home() {
             type="number"
             value={quantity}
             onChange={(e) => setQuantity(Number(e.target.value))}
-            style={{ width: "100%", marginBottom: "10px", padding: "8px" }}
+            style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
           />
 
           <label>Price</label>
@@ -62,23 +86,40 @@ export default function Home() {
             type="number"
             value={price}
             onChange={(e) => setPrice(Number(e.target.value))}
-            style={{ width: "100%", marginBottom: "10px", padding: "8px" }}
+            style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
           />
         </div>
 
-        {/* INVOICE DISPLAY */}
-        <p><strong>Item:</strong> {item}</p>
-        <p><strong>Quantity:</strong> {quantity}</p>
-        <p><strong>Price:</strong> ₹{price}</p>
+        {/* INVOICE TABLE */}
+        <table>
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Qty</th>
+              <th>Price</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{item}</td>
+              <td>{quantity}</td>
+              <td>₹{price}</td>
+              <td>₹{total}</td>
+            </tr>
+          </tbody>
+        </table>
 
-        <h3>Total: ₹{total}</h3>
+        <h3 style={{ textAlign: "right", marginTop: "10px" }}>
+          Grand Total: ₹{total}
+        </h3>
 
-        {/* PRINT BUTTON (hidden in print) */}
+        {/* PRINT BUTTON */}
         <button
           className="no-print"
           onClick={() => window.print()}
           style={{
-            marginTop: "15px",
+            marginTop: "20px",
             padding: "10px",
             width: "100%",
             cursor: "pointer",
@@ -88,7 +129,7 @@ export default function Home() {
             borderRadius: "4px"
           }}
         >
-          Print Invoice
+          Print / Save as PDF
         </button>
       </main>
     </>
