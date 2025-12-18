@@ -37,6 +37,19 @@ export default function Home() {
       />
 
       <h3>Total: ₹{total}</h3>
+       
+        <button
+  onClick={() => window.print()}
+  style={{
+    marginTop: "15px",
+    padding: "10px",
+    width: "100%",
+    cursor: "pointer"
+  }}
+>
+  Print Invoice
+</button>
+
     </main>
   );
 }
