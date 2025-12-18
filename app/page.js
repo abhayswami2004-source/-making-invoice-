@@ -8,48 +8,89 @@ export default function Home() {
 
   const total = quantity * price;
 
+  const invoiceNumber = Math.floor(Math.random() * 100000);
+  const invoiceDate = new Date().toLocaleDateString();
+
   return (
-    <main style={{ padding: "20px", fontFamily: "Arial", maxWidth: "400px" }}>
-      <h1>Simple Invoice App</h1>
+    <>
+      {/* Print CSS */}
+      <style>{`
+        @media print {
+          .no-print {
+            display: none;
+          }
+        }
+      `}</style>
 
-      <label>Item Name</label>
-      <input
-        type="text"
-        value={item}
-        onChange={(e) => setItem(e.target.value)}
-        style={{ width: "100%", marginBottom: "10px" }}
-      />
+      <main
+        style={{
+          padding: "20px",
+          fontFamily: "Arial",
+          maxWidth: "400px",
+          margin: "auto",
+          border: "1px solid #ccc",
+          borderRadius: "8px"
+        }}
+      >
+        <h1>Simple Invoice</h1>
 
-      <label>Quantity</label>
-      <input
-        type="number"
-        value={quantity}
-        onChange={(e) => setQuantity(e.target.value)}
-        style={{ width: "100%", marginBottom: "10px" }}
-      />
+        <p><strong>Invoice No:</strong> {invoiceNumber}</p>
+        <p><strong>Date:</strong> {invoiceDate}</p>
 
-      <label>Price</label>
-      <input
-        type="number"
-        value={price}
-        onChange={(e) => setPrice(e.target.value)}
-        style={{ width: "100%", marginBottom: "10px" }}
-      />
+        <hr />
 
-      <h3>Total: ₹{total}</h3>
-       
+        {/* INPUT SECTION (hidden in print) */}
+        <div className="no-print">
+          <label>Item Name</label>
+          <input
+            type="text"
+            value={item}
+            onChange={(e) => setItem(e.target.value)}
+            style={{ width: "100%", marginBottom: "10px", padding: "8px" }}
+          />
+
+          <label>Quantity</label>
+          <input
+            type="number"
+            value={quantity}
+            onChange={(e) => setQuantity(Number(e.target.value))}
+            style={{ width: "100%", marginBottom: "10px", padding: "8px" }}
+          />
+
+          <label>Price</label>
+          <input
+            type="number"
+            value={price}
+            onChange={(e) => setPrice(Number(e.target.value))}
+            style={{ width: "100%", marginBottom: "10px", padding: "8px" }}
+          />
+        </div>
+
+        {/* INVOICE DISPLAY */}
+        <p><strong>Item:</strong> {item}</p>
+        <p><strong>Quantity:</strong> {quantity}</p>
+        <p><strong>Price:</strong> ₹{price}</p>
+
+        <h3>Total: ₹{total}</h3>
+
+        {/* PRINT BUTTON (hidden in print) */}
         <button
-  onClick={() => window.print()}
-  style={{
-    marginTop: "15px",
-    padding: "10px",
-    width: "100%",
-    cursor: "pointer"
-  }}
->
-  Print Invoice
-</button>
-
-    </main>
+          className="no-print"
+          onClick={() => window.print()}
+          style={{
+            marginTop: "15px",
+            padding: "10px",
+            width: "100%",
+            cursor: "pointer",
+            backgroundColor: "#000",
+            color: "#fff",
+            border: "none",
+            borderRadius: "4px"
+          }}
+        >
+          Print Invoice
+        </button>
+      </main>
+    </>
   );
 }
